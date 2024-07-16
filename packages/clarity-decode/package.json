@@ -1,6 +1,6 @@
 {
-  "name": "clarity-decode",
-  "version": "0.7.38",
+  "name": "clarity-decode-screenshot",
+  "version": "0.7.41",
   "description": "An analytics library that uses web page interactions to generate aggregated insights",
   "author": "Microsoft Corp.",
   "license": "MIT",
@@ -26,7 +26,7 @@
     "url": "https://github.com/Microsoft/clarity/issues"
   },
   "dependencies": {
-    "clarity-js": "^0.7.38"
+    "clarity-js": "npm:clarity-js-screenshot@0.7.40"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^24.0.0",
@@ -57,5 +57,8 @@
     "*.ts": [
       "tslint --format codeFrame"
     ]
+  },
+  "publishConfig": {
+    "registry": "https://msasg.pkgs.visualstudio.com/Clarity/_packaging/Clarity/npm/registry/"
   }
 }

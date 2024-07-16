@@ -108,6 +108,8 @@ export class InteractionHelper {
     public pointer = (event: Interaction.PointerEvent, options?:RenderOptions): void => {
         let data = event.data;
         let type = event.event;
+        let isDeadClick = event.data.isDeadClick;
+        let isRageClick = event.data.isRageClick;
         let doc = this.state.window.document;
         let de = doc.documentElement;
         let p = doc.getElementById(Constant.PointerLayer);
@@ -130,11 +132,19 @@ export class InteractionHelper {
                 `#${Constant.PointerLayer} { position: absolute; z-index: ${Setting.ZIndex}; url(${Asset.Pointer}) no-repeat left center; width: ${pointerWidth}px; height: ${pointerHeight}px; }` +
                 `.${Constant.ClickLayer}, .${Constant.ClickRing}, .${Constant.TouchLayer}, .${Constant.TouchRing} { position: absolute; z-index: ${Setting.ZIndex}; border-radius: 50%; background: radial-gradient(rgba(0,90,158,0.8), transparent); width: ${Setting.ClickRadius}px; height: ${Setting.ClickRadius}px;}` +
                 `.${Constant.ClickRing} { background: transparent; border: 1px solid rgba(0,90,158,0.8); }` +
-                `.${Constant.TouchLayer} { background: radial-gradient(rgba(242,97,12,1), transparent); }` +
-                `.${Constant.TouchRing} { background: transparent; border: 1px solid rgba(242,97,12,0.8); }` +
+                `.${Constant.TouchLayer} { background: radial-gradient(rgba(0,90,158,0.8), transparent); }` +
+                `.${Constant.TouchRing} { background: transparent; border: 1px solid rgba(0,90,158,0.8); }` +
                 `.${Constant.PointerClickLayer} { background-image: url(${Asset.Click}); }` +
                 `.${Constant.PointerNone} { background: none; }` +
-                `.${Constant.PointerMove} { background-image: url(${Asset.Pointer}); }`;
+                `.${Constant.PointerMove} { background-image: url(${Asset.Pointer}); }`+
+                `.${Constant.DeadClickLayer}, .${Constant.DeadClickRing}, .${Constant.DeadTouchLayer}, .${Constant.DeadTouchRing} { position: absolute; z-index: ${Setting.ZIndex}; border-radius: 50%; background: radial-gradient(rgba(20, 253, 0, 0.8), transparent); width: ${Setting.ClickRadius}px; height: ${Setting.ClickRadius}px;}` +
+                `.${Constant.DeadClickRing} { background: transparent; border: 1px solid rgba(20, 253, 0, 0.8); }`+
+                `.${Constant.DeadTouchLayer} { background: radial-gradient(rgba(20, 253, 0, 0.8), transparent); }` +
+                `.${Constant.DeadTouchRing} { background: transparent; border: 1px solid rgba(20, 253, 0, 0.8); }`+
+                `.${Constant.RageClickLayer}, .${Constant.RageClickRing}, .${Constant.RageTouchLayer}, .${Constant.RageTouchRing} { position: absolute; z-index: ${Setting.ZIndex}; border-radius: 50%; background: radial-gradient(rgba(90,0,0,0.8), transparent); width: ${Setting.ClickRadius}px; height: ${Setting.ClickRadius}px;}` +
+                `.${Constant.RageClickRing} { background: transparent; border: 1px solid rgba(90,0,0,0.8); }`+
+                `.${Constant.RageTouchLayer} { background: radial-gradient(rgba(90,0,0,0.8), transparent); }` +
+                `.${Constant.RageTouchRing} { background: transparent; border: 1px solid rgba(90,0,0,0.8); }`;
 
             p.appendChild(style);
         }
@@ -142,13 +152,12 @@ export class InteractionHelper {
         p.style.left = (data.x - Setting.PointerOffset) + Constant.Pixel;
         p.style.top = (data.y - Setting.PointerOffset) + Constant.Pixel;
         let title = "Pointer"
-
         switch (type) {
             case Data.Event.Click:
                 if(options==null || options.renderClick)
                 {  
                     title = "Click";
-                    this.drawClick(doc, data.x, data.y, title);
+                    this.drawClick(doc, data.x, data.y, title, isDeadClick, isRageClick);
                 }
                 p.className = Constant.PointerNone;
                 break;
@@ -156,7 +165,7 @@ export class InteractionHelper {
                 if(options==null || options.renderClick)
                 {  
                     title = "Click";
-                    this.drawClick(doc, data.x, data.y, title);
+                    this.drawClick(doc, data.x, data.y, title, isDeadClick, isRageClick);
                 }
                 p.className = Constant.PointerNone;
                 break;
@@ -241,10 +250,24 @@ export class InteractionHelper {
         touch.appendChild(ringOne);
     };
 
-    private drawClick = (doc: Document, x: number, y: number, title: string): void => {
+    private drawClick = (doc: Document, x: number, y: number, title: string, isDeadClick: boolean, isRageClick: boolean): void => {
         let de = doc.documentElement;
         let click = doc.createElement("DIV");
-        click.className = Constant.ClickLayer;
+        
+        let clickClassName = Constant.ClickLayer;
+        let ringClassName = Constant.ClickRing;
+        if(isRageClick)
+        {
+            clickClassName = Constant.RageClickLayer;
+            ringClassName = Constant.RageClickRing;
+        }
+        else if(isDeadClick)
+        {
+            clickClassName = Constant.DeadClickLayer;
+            ringClassName = Constant.DeadClickRing;
+        }
+
+        click.className = clickClassName;
         click.setAttribute(Constant.Title, `${title} (${x}${Constant.Pixel}, ${y}${Constant.Pixel})`);
         click.style.left = (x - Setting.ClickRadius / 2) + Constant.Pixel;
         click.style.top = (y - Setting.ClickRadius / 2) + Constant.Pixel
@@ -252,7 +275,7 @@ export class InteractionHelper {
 
         // First pulsating ring
         let ringOne = click.cloneNode() as HTMLElement;
-        ringOne.className = Constant.ClickRing;
+        ringOne.className = ringClassName;
         ringOne.style.left = "-0.5" + Constant.Pixel;
         ringOne.style.top = "-0.5" + Constant.Pixel;
         ringOne.style.animation = "pulsate-one 1 1s";

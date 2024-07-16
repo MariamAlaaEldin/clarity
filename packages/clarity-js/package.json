@@ -1,6 +1,6 @@
 {
-  "name": "clarity-js",
-  "version": "0.7.38",
+  "name": "clarity-js-screenshot",
+  "version": "0.7.40",
   "description": "An analytics library that uses web page interactions to generate aggregated insights",
   "author": "Microsoft Corp.",
   "license": "MIT",
@@ -66,5 +66,8 @@
     "*.ts": [
       "tslint --format codeFrame"
     ]
+  },
+  "publishConfig": {
+    "registry": "https://msasg.pkgs.visualstudio.com/Clarity/_packaging/Clarity/npm/registry/"
   }
 }
