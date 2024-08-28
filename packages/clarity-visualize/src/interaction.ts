@@ -199,6 +199,28 @@ export class InteractionHelper {
         p.setAttribute(Constant.Title, `${title} (${data.x}${Constant.Pixel}, ${data.y}${Constant.Pixel})`);
     };
 
+    public removeClicks = (): void => {
+
+        let doc = this.state.window.document;
+        var clicks = doc.getElementsByClassName(Constant.ClickLayer);
+
+        while(clicks[0]) {
+            clicks[0].parentNode.removeChild(clicks[0]);
+        }
+        
+        var rageClicks = doc.getElementsByClassName(Constant.RageClickLayer);
+
+        while(rageClicks[0]) {
+            rageClicks[0].parentNode.removeChild(rageClicks[0]);
+        } 
+
+        var deadClicks = doc.getElementsByClassName(Constant.DeadClickLayer);
+
+        while(deadClicks[0]) {
+            deadClicks[0].parentNode.removeChild(deadClicks[0]);
+        } 
+    };
+
     private hover = (): void => {
         if (this.targetId && this.targetId !== this.hoverId) {
             let depth = 0;
@@ -270,7 +292,9 @@ export class InteractionHelper {
         click.className = clickClassName;
         click.setAttribute(Constant.Title, `${title} (${x}${Constant.Pixel}, ${y}${Constant.Pixel})`);
         click.style.left = (x - Setting.ClickRadius / 2) + Constant.Pixel;
-        click.style.top = (y - Setting.ClickRadius / 2) + Constant.Pixel
+        click.style.top = (y - Setting.ClickRadius / 2) + Constant.Pixel;
+        
+        click.style.animation = "disappear 1 5s";
         de.appendChild(click);
 
         // First pulsating ring

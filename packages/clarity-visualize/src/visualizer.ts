@@ -202,6 +202,10 @@ export class Visualizer implements VisualizerType {
         }
     }
 
+    public resetClicks = async (): Promise<void> => {
+        this.interaction.removeClicks();
+    }
+
     private reset = (): void => {
         this.data?.reset();
         this.interaction?.reset();
